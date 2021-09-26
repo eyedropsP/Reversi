@@ -1,22 +1,21 @@
 ﻿using NormalReversi.Models.Enum;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace NormalReversi.View
 {
 	public class ReversiGUI : MonoBehaviour
 	{
-		[FormerlySerializedAs("blackPieceCountText")] [SerializeField] private TextMeshProUGUI _blackPieceCountText;
-		[FormerlySerializedAs("whitePieceCountText")] [SerializeField] private TextMeshProUGUI _whitePieceCountText;
-		[FormerlySerializedAs("gameStateText")] [SerializeField] private TextMeshProUGUI _gameStateText;
-		[FormerlySerializedAs("nowTurnText")] [SerializeField] private TextMeshProUGUI _nowTurnText;
-		[FormerlySerializedAs("nowTurnPieceSpriteRenderer")] [SerializeField] private SpriteRenderer _nowTurnPieceSpriteRenderer;
+		[SerializeField] private TextMeshProUGUI blackPieceCountText;
+		[SerializeField] private TextMeshProUGUI whitePieceCountText;
+		[SerializeField] private TextMeshProUGUI gameStateText;
+		[SerializeField] private TextMeshProUGUI nowTurnText;
+		[SerializeField] private SpriteRenderer nowTurnPieceSpriteRenderer;
 		
 		public void SetPieceCount(int blackPieceCount, int whitePieceCount)
 		{
-			_blackPieceCountText.text = $"BLACK : {blackPieceCount}";
-			_whitePieceCountText.text = $"WHITE : {whitePieceCount}";
+			blackPieceCountText.text = $"BLACK : {blackPieceCount}";
+			whitePieceCountText.text = $"WHITE : {whitePieceCount}";
 		}
 
 		public void ShowNowTurn(GameState gameState)
@@ -24,21 +23,21 @@ namespace NormalReversi.View
 			switch (gameState)
 			{
 				case GameState.BlackTurn:
-					_nowTurnPieceSpriteRenderer.color = Color.black;
+					nowTurnPieceSpriteRenderer.color = Color.black;
 					break;
 				case GameState.WhiteTurn:
-					_nowTurnPieceSpriteRenderer.color = Color.white;
+					nowTurnPieceSpriteRenderer.color = Color.white;
 					break;
 				case GameState.GameSet:
-					_nowTurnText.text = default;
-					_nowTurnPieceSpriteRenderer.color = new Color(0,0,0,0);
+					nowTurnText.text = default;
+					nowTurnPieceSpriteRenderer.color = new Color(0,0,0,0);
 					break;
 			}
 		}
 
 		public void ShowWinner(Outcome outcome)
 		{
-			_gameStateText.text =
+			gameStateText.text =
 				outcome != Outcome.Draw ?
 					$"GAME SET!!\n{outcome} Win!!" :
 					$"GAME SET!!\nDRAW...";

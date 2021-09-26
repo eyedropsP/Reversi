@@ -5,6 +5,7 @@ namespace NormalReversi.Models.Interface
 {
 	public interface IGridManager
 	{
+		void Initialize();
 		IReadOnlyReactiveProperty<int> BlackPieceCount { get; }
 		IReadOnlyReactiveProperty<int> WhitePieceCount { get; }
 		IReadOnlyReactiveProperty<int> CanPutGridCount { get; }

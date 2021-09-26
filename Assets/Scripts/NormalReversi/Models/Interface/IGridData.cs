@@ -13,6 +13,7 @@ namespace NormalReversi.Models.Interface
 		GridState GridState { get; }
 		Point Point { get; }
 		HashSet<Tuple<int, int>> DirectionOffset { get; }
+		bool IsCanPut { get; }
 		void ChangeGridState(GridState gridState);
 		void Init(Point point, Vector2 location, GridState gridState);
 		void AcceptPiece(IPiece piece);

@@ -4,15 +4,14 @@ using NormalReversi.Models.Interface;
 using NormalReversi.Models.Struct;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace NormalReversi.Models.Manager
 {
 	public class GridManager : MonoBehaviour, IGridManager
 	{
-		[FormerlySerializedAs("gridPrefab")] [SerializeField] private GameObject _gridPrefab;
-		[FormerlySerializedAs("gridBackgroundPrefab")] [SerializeField] private GameObject _gridBackgroundPrefab;
-		[FormerlySerializedAs("piecePrefab")] [SerializeField] private GameObject _piecePrefab;
+		[SerializeField] private GameObject _gridPrefab;
+		[SerializeField] private SpriteRenderer _gridBackgroundPrefab;
+		[SerializeField] private GameObject _piecePrefab;
 		
 		private readonly IntReactiveProperty _blackPieceCount = new IntReactiveProperty(0);
 		private readonly IntReactiveProperty _whitePieceCount = new IntReactiveProperty(0);
@@ -28,14 +27,10 @@ namespace NormalReversi.Models.Manager
 		private readonly IGridData[,] _gridDatas = new IGridData[BoardSize,BoardSize];
 		private IGameManager _gameManager;
 		
-		private void Start()
-		{
-			Initialize();
-		}
-
-		private void Initialize()
+		public void Initialize()
 		{
 			Instantiate(_gridBackgroundPrefab);
+			
 			for(var x = 0; x < BoardSize; x++)
 			{
 				for (var y = 0; y < BoardSize; y++)
@@ -69,6 +64,7 @@ namespace NormalReversi.Models.Manager
 			_gridDatas[4,4].ChangeGridState(GridState.Black);
 			_gridDatas[3,4].ChangeGridState(GridState.White);
 			_gridDatas[4,3].ChangeGridState(GridState.White);
+			
 			RefreshGrid();
 		}
 
@@ -134,12 +130,7 @@ namespace NormalReversi.Models.Manager
 				return Outcome.Black;
 			}
 
-			if (WhitePieceCount.Value > BlackPieceCount.Value)
-			{
-				return Outcome.White;
-			}
-
-			return Outcome.Draw;
+			return WhitePieceCount.Value > BlackPieceCount.Value ? Outcome.White : Outcome.Draw;
 		}
 
 		private void FlipPiece(IGridData gridData, int offsetX, int offsetY)

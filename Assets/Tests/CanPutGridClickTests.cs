@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using NormalReversi.Models.Interface;
 using NUnit.Framework;
 using UnityEngine;
@@ -30,7 +29,6 @@ namespace Tests
         [UnityTest]
         public IEnumerator CanPutGridClickTestsWithEnumeratorPasses()
         {
-            
             yield return null;
         }
     }

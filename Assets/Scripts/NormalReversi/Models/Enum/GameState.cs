@@ -2,8 +2,8 @@
 {
 	public enum GameState
 	{
-		BLACKTURN,
-		WHITETURN,
-		GAMESET,
+		BlackTurn,
+		WhiteTurn,
+		GameSet,
 	}
 }

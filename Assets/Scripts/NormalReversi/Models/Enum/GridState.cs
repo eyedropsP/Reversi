@@ -2,9 +2,9 @@
 {
 	public enum GridState
 	{
-		BLACK,
-		WHITE,
-		NOPIECE,
+		Black,
+		White,
+		Nopiece,
 		CanPut,
 	}
 }

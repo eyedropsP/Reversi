@@ -4,14 +4,15 @@ using NormalReversi.Models.Enum;
 using NormalReversi.Models.Interface;
 using NormalReversi.Models.Struct;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace NormalReversi.Models
 {
 	public class GridData : MonoBehaviour, IGridData
 	{
-		[SerializeField] private SpriteRenderer spriteRenderer;
-		private Color normalGridColor = new Color(0.2312f, 0.68f, 0.4556f, 1f);
-		private Color highLightGridColor = Color.green;
+		[FormerlySerializedAs("spriteRenderer")] [SerializeField] private SpriteRenderer _spriteRenderer;
+		private readonly Color _normalGridColor = new Color(0.2312f, 0.68f, 0.4556f, 1f);
+		private readonly Color _highLightGridColor = Color.green;
 		
 		public GridState GridState { get; private set; }
 		public Point Point { get; private set; }
@@ -24,7 +25,7 @@ namespace NormalReversi.Models
 			Point = point;
 			GridState = gridState;
 			Location = location;
-			spriteRenderer.color = normalGridColor;
+			_spriteRenderer.color = _normalGridColor;
 			DirectionOffset = new HashSet<Tuple<int, int>>();
 			Piece = null;
 		}
@@ -37,7 +38,7 @@ namespace NormalReversi.Models
 		public void ChangeGridState(GridState gridState)
 		{
 			GridState = gridState;
-			spriteRenderer.color = gridState == GridState.CanPut ? highLightGridColor : normalGridColor;
+			_spriteRenderer.color = gridState == GridState.CanPut ? _highLightGridColor : _normalGridColor;
 		}
 	}
 }

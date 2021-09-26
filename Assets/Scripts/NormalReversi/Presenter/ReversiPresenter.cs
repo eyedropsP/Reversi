@@ -5,47 +5,48 @@ using NormalReversi.Models.Manager;
 using NormalReversi.View;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace NormalReversi.Presenter
 {
 	public class ReversiPresenter : MonoBehaviour
 	{
-		[SerializeField] private ReversiView reversiView;
-		[SerializeField] private ReversiGUI reversiGUI;
+		[FormerlySerializedAs("reversiView")] [SerializeField] private ReversiView _reversiView;
+		[FormerlySerializedAs("reversiGUI")] [SerializeField] private ReversiGUI _reversiGUI;
 		
-		private IGameManager gameManager;
-		private IGridManager gridManager;
-		private IPlayer player;
+		private IGameManager _gameManager;
+		private IGridManager _gridManager;
+		private IPlayer _player;
 		
 		[Inject]
 		public void Constructor(IGameManager gameManager, IGridManager gridManager, IPlayer player)
 		{
-			this.gameManager = gameManager;
-			this.gridManager = gridManager;
-			this.player = player;
+			_gameManager = gameManager;
+			_gridManager = gridManager;
+			_player = player;
 		}
 
 		private void Awake()
 		{
-			gridManager.RefreshGameManager(gameManager);
+			_gridManager.RefreshGameManager(_gameManager);
 		}
 
 		private void Start()
 		{
-			reversiView.OnGridClicked()
-				.Where(_ => gridManager.CanPutGridCount.Value > 0)
-				.TakeUntil(gameManager.NowGameState.Where(state => state == GameState.GAMESET))
+			_reversiView.OnGridClicked()
+				.Where(_ => _gridManager.CanPutGridCount.Value > 0)
+				.TakeUntil(_gameManager.NowGameState.Where(state => state == GameState.GameSet))
 				.Subscribe(gridData =>
 				{
 					try
 					{
-						var playerPutGridData = player.Put(gridData, gameManager);
-						gridManager.ReceivePieceFromPlayer(playerPutGridData);
-						gridManager.FlipPiece(playerPutGridData);
-						gameManager.ChangeGameState();
-						gridManager.RefreshGameManager(gameManager);
-						gridManager.RefreshGrid();
+						var playerPutGridData = _player.Put(gridData, _gameManager);
+						_gridManager.ReceivePieceFromPlayer(playerPutGridData);
+						_gridManager.FlipPiece(playerPutGridData);
+						_gameManager.ChangeGameState();
+						_gridManager.RefreshGameManager(_gameManager);
+						_gridManager.RefreshGrid();
 					}
 					catch (Exception e)
 					{
@@ -53,48 +54,48 @@ namespace NormalReversi.Presenter
 					}
 				});
 			
-			var subject1 = gridManager.BlackPieceCount;
-			var subject2 = gridManager.WhitePieceCount;
+			var subject1 = _gridManager.BlackPieceCount;
+			var subject2 = _gridManager.WhitePieceCount;
 			subject1
 				.CombineLatest(subject2, (item1, item2) => new Tuple<int, int>(item1, item2))
-				.Subscribe(tuple => reversiGUI.SetPieceCount(tuple.Item1, tuple.Item2))
+				.Subscribe(tuple => _reversiGUI.SetPieceCount(tuple.Item1, tuple.Item2))
 				.AddTo(this);
 
 			subject1
 				.CombineLatest(subject2, (item1, item2) => new Tuple<int, int>(item1, item2))
 				.Where(tuple => tuple.Item1 + tuple.Item2 == GridManager.GridCount)
-				.TakeUntil(gameManager.NowGameState.Where(state => state == GameState.GAMESET))
+				.TakeUntil(_gameManager.NowGameState.Where(state => state == GameState.GameSet))
 				.Subscribe(_ =>
 				{
-					gameManager.GameSet();
+					_gameManager.GameSet();
 				});
 
-			gridManager.CanPutGridCount
+			_gridManager.CanPutGridCount
 				.Where(value => value == 0)
 				.Subscribe(value =>
 				{
-					gameManager.ChangeGameState();
-					gridManager.RefreshGameManager(gameManager);
-					gridManager.RefreshGrid();
+					_gameManager.ChangeGameState();
+					_gridManager.RefreshGameManager(_gameManager);
+					_gridManager.RefreshGrid();
 					
-					if (gridManager.CanPutGridCount.Value == 0)
+					if (_gridManager.CanPutGridCount.Value == 0)
 					{
-						gameManager.GameSet();
+						_gameManager.GameSet();
 					}
 				});
 
-			gameManager.NowGameState
+			_gameManager.NowGameState
 				.Subscribe(gameState =>
 				{
-					reversiGUI.ShowNowTurn(gameState);
+					_reversiGUI.ShowNowTurn(gameState);
 				}).AddTo(this);
 
-			gameManager.NowGameState
-				.Where(state => state == GameState.GAMESET)
+			_gameManager.NowGameState
+				.Where(state => state == GameState.GameSet)
 				.Subscribe(_ =>
 				{
-					var outcome = gridManager.JudgeWinner();
-					reversiGUI.ShowWinner(outcome);
+					var outcome = _gridManager.JudgeWinner();
+					_reversiGUI.ShowWinner(outcome);
 				}).AddTo(this);
 		}
 	}

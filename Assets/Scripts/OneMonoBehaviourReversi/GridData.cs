@@ -5,19 +5,19 @@ namespace OneMonoBehaviourReversi
 {
 	public class GridData : IGridData
 	{
-		public GridState gridState { get; private set; }
+		private GridState _gridState { get; set; }
 
 		public Point Point { get; }
 
 		public GridData(int x, int y, GridState gridState)
 		{
 			Point = new Point(x, y);
-			this.gridState = gridState;
+			this._gridState = gridState;
 		}
 
 		public void ChangeGridState(GridState gridState)
 		{
-			this.gridState = gridState;
+			this._gridState = gridState;
 		}
 	}
 }

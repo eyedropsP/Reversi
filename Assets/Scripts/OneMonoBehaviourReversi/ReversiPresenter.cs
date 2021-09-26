@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OneMonoBehaviourReversi
 {
 	public class ReversiPresenter : MonoBehaviour
 	{
-		[SerializeField] private ReversiView reversiView;
-		[SerializeField] private ReversiGUI reversiGUI;
+		[FormerlySerializedAs("reversiView")] [SerializeField] private ReversiView _reversiView;
+		[FormerlySerializedAs("reversiGUI")] [SerializeField] private ReversiGUI _reversiGUI;
 
 		private void Awake()
 		{

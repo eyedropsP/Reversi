@@ -1,24 +1,30 @@
 ﻿using OneMonoBehaviourReversi.Enums;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OneMonoBehaviourReversi
 {
     public class Reversi : MonoBehaviour
     {
-        [SerializeField] private GameObject gridPrefab = default;
-        [SerializeField] private GameObject gridBackgroundPrefab = default;
-        [SerializeField] private GameObject whiteStone = default;
-        [SerializeField] private GameObject blackStone = default;
+        [FormerlySerializedAs("gridPrefab")] [SerializeField] private GameObject _gridPrefab;
+        [FormerlySerializedAs("gridBackgroundPrefab")] [SerializeField] private GameObject _gridBackgroundPrefab;
+        [FormerlySerializedAs("whiteStone")] [SerializeField] private GameObject _whiteStone;
+        [FormerlySerializedAs("blackStone")] [SerializeField] private GameObject _blackStone;
 
-        private SpriteRenderer gridSprite;
-        private GameState gameState;
+        private SpriteRenderer _gridSprite;
+        private GameState _gameState;
         
-        private const int boardSize = 8;
-        private const float endPoint = 3.85f;
-        private const float interval = 1.1f;
+        private const int BoardSize = 8;
+        private const float EndPoint = 3.85f;
+        private const float Interval = 1.1f;
 
-        private int[,] grid;
-        private GameObject[,] gridGameObject;
+        private int[,] _grid;
+        private GameObject[,] _gridGameObject;
+
+        public Reversi(SpriteRenderer gridSprite)
+        {
+            _gridSprite = gridSprite;
+        }
 
         // Start is called before the first frame update
         public void Start()
@@ -35,33 +41,33 @@ namespace OneMonoBehaviourReversi
 
         private void InitializeGame()
         {
-            gameState = GameState.TurnBlack;    
-            gridGameObject = new GameObject[boardSize,boardSize];
-            grid = new int[boardSize,boardSize];
-            grid[3, 4] = grid[4,3] = -1;
-            grid[3, 3] = grid[4, 4] = 1;
+            _gameState = GameState.TurnBlack;    
+            _gridGameObject = new GameObject[BoardSize,BoardSize];
+            _grid = new int[BoardSize,BoardSize];
+            _grid[3, 4] = _grid[4,3] = -1;
+            _grid[3, 3] = _grid[4, 4] = 1;
         }
     
         private void CreateBoard()
         {
-            Instantiate(gridBackgroundPrefab);
+            Instantiate(_gridBackgroundPrefab);
         
-            for (var h = 0; h < boardSize; h++)
+            for (var h = 0; h < BoardSize; h++)
             {
-                for (var w = 0; w < boardSize; w++)
+                for (var w = 0; w < BoardSize; w++)
                 {
-                    var y = (h * interval) - endPoint;
-                    var x = (w * interval) - endPoint;
-                    gridGameObject[h, w] = Instantiate(gridPrefab, new Vector2(x, y), Quaternion.identity);
+                    var y = (h * Interval) - EndPoint;
+                    var x = (w * Interval) - EndPoint;
+                    _gridGameObject[h, w] = Instantiate(_gridPrefab, new Vector2(x, y), Quaternion.identity);
                 
-                    if (grid[h, w] == -1)
+                    if (_grid[h, w] == -1)
                     {
-                        Instantiate(whiteStone, new Vector2(x, y), Quaternion.identity);
+                        Instantiate(_whiteStone, new Vector2(x, y), Quaternion.identity);
                     }
 
-                    if (grid[h, w] == 1)
+                    if (_grid[h, w] == 1)
                     {
-                        Instantiate(blackStone, new Vector2(x, y), Quaternion.identity);
+                        Instantiate(_blackStone, new Vector2(x, y), Quaternion.identity);
                     }
                 }
             }
@@ -69,9 +75,9 @@ namespace OneMonoBehaviourReversi
 
         private void RefreshBoard()
         {
-            for (var h = 0; h < boardSize; h++)
+            for (var h = 0; h < BoardSize; h++)
             {
-                for (var w = 0; w < boardSize; w++)
+                for (var w = 0; w < BoardSize; w++)
                 {
                 
                 }
@@ -80,10 +86,10 @@ namespace OneMonoBehaviourReversi
 
         private bool CanTransitionNextTurn()
         {
-            for (var index0 = 0; index0 < grid.GetLength(0); index0++)
-            for (var index1 = 0; index1 < grid.GetLength(1); index1++)
+            for (var index0 = 0; index0 < _grid.GetLength(0); index0++)
+            for (var index1 = 0; index1 < _grid.GetLength(1); index1++)
             {
-                var gridState = grid[index0, index1];
+                var gridState = _grid[index0, index1];
                 if (gridState == 0)
                 {
                     return true;
@@ -110,7 +116,7 @@ namespace OneMonoBehaviourReversi
             if (raycastHit2D)
             {
                 var hitObject = raycastHit2D.transform.gameObject;
-                if (!hitObject.CompareTag("GridData"))
+                if (!hitObject.CompareTag($"GridData"))
                 {
                     return;
                 }
@@ -126,17 +132,17 @@ namespace OneMonoBehaviourReversi
                 //     }
                 // }
                 
-                if (gameState == GameState.TurnBlack)
+                if (_gameState == GameState.TurnBlack)
                 {
-                    Instantiate(blackStone, hitObject.transform);
-                    gameState = GameState.TurnWhite;
+                    Instantiate(_blackStone, hitObject.transform);
+                    _gameState = GameState.TurnWhite;
                     return;
                 }
             
-                if(gameState == GameState.TurnWhite)
+                if(_gameState == GameState.TurnWhite)
                 {
-                    Instantiate(whiteStone, hitObject.transform);
-                    gameState = GameState.TurnBlack;
+                    Instantiate(_whiteStone, hitObject.transform);
+                    _gameState = GameState.TurnBlack;
                 }
             }
         }

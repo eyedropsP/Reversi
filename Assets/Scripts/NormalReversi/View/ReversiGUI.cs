@@ -1,4 +1,5 @@
-﻿using NormalReversi.Models.Enum;
+﻿using System;
+using NormalReversi.Models.Enum;
 using TMPro;
 using UnityEngine;
 
@@ -32,6 +33,8 @@ namespace NormalReversi.View
 					nowTurnText.text = default;
 					nowTurnPieceSpriteRenderer.color = new Color(0,0,0,0);
 					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(gameState), gameState, null);
 			}
 		}
 

@@ -2,8 +2,8 @@
 {
 	public enum Outcome
 	{
-		BLACK,
-		WHITE,
+		Black,
+		White,
 		Draw,
 	}
 }

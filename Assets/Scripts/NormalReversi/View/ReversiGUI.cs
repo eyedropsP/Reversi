@@ -22,13 +22,13 @@ namespace NormalReversi.View
 		{
 			switch (gameState)
 			{
-				case GameState.BLACKTURN:
+				case GameState.BlackTurn:
 					nowTurnPieceSpriteRenderer.color = Color.black;
 					break;
-				case GameState.WHITETURN:
+				case GameState.WhiteTurn:
 					nowTurnPieceSpriteRenderer.color = Color.white;
 					break;
-				case GameState.GAMESET:
+				case GameState.GameSet:
 					nowTurnText.text = default;
 					nowTurnPieceSpriteRenderer.color = new Color(0,0,0,0);
 					break;

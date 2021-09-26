@@ -35,7 +35,7 @@ namespace NormalReversi.Presenter
 		{
 			reversiView.OnGridClicked()
 				.Where(_ => gridManager.CanPutGridCount.Value > 0)
-				.TakeUntil(gameManager.NowGameState.Where(state => state == GameState.GAMESET))
+				.TakeUntil(gameManager.NowGameState.Where(state => state == GameState.GameSet))
 				.Subscribe(gridData =>
 				{
 					try
@@ -63,7 +63,7 @@ namespace NormalReversi.Presenter
 			subject1
 				.CombineLatest(subject2, (item1, item2) => new Tuple<int, int>(item1, item2))
 				.Where(tuple => tuple.Item1 + tuple.Item2 == GridManager.GridCount)
-				.TakeUntil(gameManager.NowGameState.Where(state => state == GameState.GAMESET))
+				.TakeUntil(gameManager.NowGameState.Where(state => state == GameState.GameSet))
 				.Subscribe(_ =>
 				{
 					gameManager.GameSet();
@@ -90,7 +90,7 @@ namespace NormalReversi.Presenter
 				}).AddTo(this);
 
 			gameManager.NowGameState
-				.Where(state => state == GameState.GAMESET)
+				.Where(state => state == GameState.GameSet)
 				.Subscribe(_ =>
 				{
 					var outcome = gridManager.JudgeWinner();

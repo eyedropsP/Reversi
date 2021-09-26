@@ -4,77 +4,78 @@ using NormalReversi.Models.Interface;
 using NormalReversi.Models.Struct;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace NormalReversi.Models.Manager
 {
 	public class GridManager : MonoBehaviour, IGridManager
 	{
-		[SerializeField] private GameObject gridPrefab;
-		[SerializeField] private GameObject gridBackgroundPrefab;
-		[SerializeField] private GameObject piecePrefab;
+		[FormerlySerializedAs("gridPrefab")] [SerializeField] private GameObject _gridPrefab;
+		[FormerlySerializedAs("gridBackgroundPrefab")] [SerializeField] private GameObject _gridBackgroundPrefab;
+		[FormerlySerializedAs("piecePrefab")] [SerializeField] private GameObject _piecePrefab;
 		
-		private IntReactiveProperty blackPieceCount = new IntReactiveProperty(0);
-		private IntReactiveProperty whitePieceCount = new IntReactiveProperty(0);
-		private IntReactiveProperty canPutGridCount = new IntReactiveProperty(0);
-		public IReadOnlyReactiveProperty<int> BlackPieceCount => blackPieceCount;
-		public IReadOnlyReactiveProperty<int> WhitePieceCount => whitePieceCount;
-		public IReadOnlyReactiveProperty<int> CanPutGridCount => canPutGridCount; 
+		private readonly IntReactiveProperty _blackPieceCount = new IntReactiveProperty(0);
+		private readonly IntReactiveProperty _whitePieceCount = new IntReactiveProperty(0);
+		private readonly IntReactiveProperty _canPutGridCount = new IntReactiveProperty(0);
+		public IReadOnlyReactiveProperty<int> BlackPieceCount => _blackPieceCount;
+		public IReadOnlyReactiveProperty<int> WhitePieceCount => _whitePieceCount;
+		public IReadOnlyReactiveProperty<int> CanPutGridCount => _canPutGridCount; 
 		public const int GridCount = 64;
 		
-		private const int boardSize = 8;
-		private const float endPoint = 3.85f;
-		private const float interval = 1.1f;
-		private IGridData[,] gridDatas = new IGridData[boardSize,boardSize];
-		private IGameManager gameManager;
+		private const int BoardSize = 8;
+		private const float EndPoint = 3.85f;
+		private const float Interval = 1.1f;
+		private readonly IGridData[,] _gridDatas = new IGridData[BoardSize,BoardSize];
+		private IGameManager _gameManager;
 		
 		private void Start()
 		{
 			Initialize();
 		}
 
-		public void Initialize()
+		private void Initialize()
 		{
-			Instantiate(gridBackgroundPrefab);
-			for(var x = 0; x < boardSize; x++)
+			Instantiate(_gridBackgroundPrefab);
+			for(var x = 0; x < BoardSize; x++)
 			{
-				for (var y = 0; y < boardSize; y++)
+				for (var y = 0; y < BoardSize; y++)
 				{
-					var xLocation = (x * interval) - endPoint;
-					var yLocation = (y * interval) - endPoint;
+					var xLocation = (x * Interval) - EndPoint;
+					var yLocation = (y * Interval) - EndPoint;
 					var gridLocation = new Vector2(xLocation, yLocation);
-					Instantiate(gridPrefab, gridLocation, Quaternion.identity)
+					Instantiate(_gridPrefab, gridLocation, Quaternion.identity)
 						.TryGetComponent(out IGridData targetGridData);
-					targetGridData.Init(new Point(x, y), gridLocation, GridState.NOPIECE);
-					gridDatas[x, y] = targetGridData;
+					targetGridData.Init(new Point(x, y), gridLocation, GridState.Nopiece);
+					_gridDatas[x, y] = targetGridData;
 
-					IPiece piece = null;
+					IPiece piece;
 					if (y == 3 && x == 3 || y == 4 && x == 4)
 					{
-						Instantiate(piecePrefab, gridLocation, Quaternion.identity)
+						Instantiate(_piecePrefab, gridLocation, Quaternion.identity)
 							.TryGetComponent(out piece);
-						gridDatas[x, y].AcceptPiece(piece);
+						_gridDatas[x, y].AcceptPiece(piece);
 					}
 
 					if (y == 3 && x == 4 || y == 4 && x == 3)
 					{
-						Instantiate(piecePrefab, gridLocation, Quaternion.identity)
+						Instantiate(_piecePrefab, gridLocation, Quaternion.identity)
 							.TryGetComponent(out piece);
-						gridDatas[x, y].AcceptPiece(piece);
+						_gridDatas[x, y].AcceptPiece(piece);
 					}
 				}
 			}
 			
-			gridDatas[3,3].ChangeGridState(GridState.BLACK);
-			gridDatas[4,4].ChangeGridState(GridState.BLACK);
-			gridDatas[3,4].ChangeGridState(GridState.WHITE);
-			gridDatas[4,3].ChangeGridState(GridState.WHITE);
+			_gridDatas[3,3].ChangeGridState(GridState.Black);
+			_gridDatas[4,4].ChangeGridState(GridState.Black);
+			_gridDatas[3,4].ChangeGridState(GridState.White);
+			_gridDatas[4,3].ChangeGridState(GridState.White);
 			RefreshGrid();
 		}
 
 		// ReSharper disable once ParameterHidesMember
 		public void RefreshGameManager(IGameManager gameManager)
 		{
-			this.gameManager = gameManager;
+			_gameManager = gameManager;
 		}
 		
 		public void RefreshGrid()
@@ -83,39 +84,39 @@ namespace NormalReversi.Models.Manager
 			var whitePiece = 0;
 			var canPutGrid = 0;
 
-			for (var x = 0; x < boardSize; x++)
+			for (var x = 0; x < BoardSize; x++)
 			{
-				for (var y = 0; y < boardSize; y++)
+				for (var y = 0; y < BoardSize; y++)
 				{
-					switch (gridDatas[x, y].GridState)
+					switch (_gridDatas[x, y].GridState)
 					{
-						case GridState.NOPIECE:
+						case GridState.Nopiece:
 							break;
-						case GridState.BLACK:
-							gridDatas[x, y].Piece.InitColor(Color.black);
+						case GridState.Black:
+							_gridDatas[x, y].Piece.InitColor(Color.black);
 							blackPiece++;
 							break;
-						case GridState.WHITE:
-							gridDatas[x, y].Piece.InitColor(Color.white);
+						case GridState.White:
+							_gridDatas[x, y].Piece.InitColor(Color.white);
 							whitePiece++;
 							break;
 					}
 					SetCanPutGrid(x,y);
-					if (gridDatas[x, y].GridState == GridState.CanPut)
+					if (_gridDatas[x, y].GridState == GridState.CanPut)
 					{
 						canPutGrid++;
 					}
 				}
 			}
 
-			blackPieceCount.Value = blackPiece;
-			whitePieceCount.Value = whitePiece;
-			canPutGridCount.Value = canPutGrid;
+			_blackPieceCount.Value = blackPiece;
+			_whitePieceCount.Value = whitePiece;
+			_canPutGridCount.Value = canPutGrid;
 		}
 		
 		public void ReceivePieceFromPlayer(IGridData gridData)
 		{
-			gridDatas[gridData.Point.X, gridData.Point.Y] = gridData;
+			_gridDatas[gridData.Point.X, gridData.Point.Y] = gridData;
 		}
 
 		public void FlipPiece(IGridData gridData)
@@ -130,12 +131,12 @@ namespace NormalReversi.Models.Manager
 		{
 			if (BlackPieceCount.Value > WhitePieceCount.Value)
 			{
-				return Outcome.BLACK;
+				return Outcome.Black;
 			}
 
 			if (WhitePieceCount.Value > BlackPieceCount.Value)
 			{
-				return Outcome.WHITE;
+				return Outcome.White;
 			}
 
 			return Outcome.Draw;
@@ -146,22 +147,22 @@ namespace NormalReversi.Models.Manager
 			var nextX = gridData.Point.X + offsetX;
 			var nextY = gridData.Point.Y + offsetY;
 
-			if (!IsMyPieceNextGrid(gridDatas[nextX, nextY].GridState))
+			if (!IsMyPieceNextGrid(_gridDatas[nextX, nextY].GridState))
 			{
-				gridDatas[nextX, nextY].ChangeGridState(gridData.GridState);
-				FlipPiece(gridDatas[nextX, nextY], offsetX, offsetY);
+				_gridDatas[nextX, nextY].ChangeGridState(gridData.GridState);
+				FlipPiece(_gridDatas[nextX, nextY], offsetX, offsetY);
 			}
 		}
 
 		private void SetCanPutGrid(int currentX, int currentY)
 		{
-			if (gridDatas[currentX, currentY].GridState == GridState.CanPut)
+			if (_gridDatas[currentX, currentY].GridState == GridState.CanPut)
 			{
-				gridDatas[currentX, currentY].ChangeGridState(GridState.NOPIECE);
-				gridDatas[currentX, currentY].DirectionOffset.Clear();
+				_gridDatas[currentX, currentY].ChangeGridState(GridState.Nopiece);
+				_gridDatas[currentX, currentY].DirectionOffset.Clear();
 			}
 			
-			if (gridDatas[currentX, currentY].GridState != GridState.NOPIECE)
+			if (_gridDatas[currentX, currentY].GridState != GridState.Nopiece)
 			{
 				return;
 			}
@@ -179,7 +180,7 @@ namespace NormalReversi.Models.Manager
 							continue;
 						}
 					
-						var nextGridState = gridDatas[nextX, nextY].GridState;
+						var nextGridState = _gridDatas[nextX, nextY].GridState;
 						if (IsNoPieceNextGrid(nextGridState) || IsMyPieceNextGrid(nextGridState))
 						{
 							continue;
@@ -187,8 +188,8 @@ namespace NormalReversi.Models.Manager
 
 						if (!CanPutGrid(nextX, nextY, offsetX, offsetY)) continue;
 						
-						gridDatas[currentX, currentY].ChangeGridState(GridState.CanPut);
-						gridDatas[currentX, currentY].DirectionOffset.Add(new Tuple<int, int>(offsetX, offsetY));
+						_gridDatas[currentX, currentY].ChangeGridState(GridState.CanPut);
+						_gridDatas[currentX, currentY].DirectionOffset.Add(new Tuple<int, int>(offsetX, offsetY));
 					}
 				}
 			}
@@ -205,7 +206,7 @@ namespace NormalReversi.Models.Manager
 				return false;
 			}
 			
-			var nextGridState = gridDatas[nextX, nextY].GridState;
+			var nextGridState = _gridDatas[nextX, nextY].GridState;
 			if (IsNoPieceNextGrid(nextGridState))
 			{
 				return false;
@@ -226,14 +227,14 @@ namespace NormalReversi.Models.Manager
 
 		private static bool IsNoPieceNextGrid(GridState nextGridState)
 		{
-			return nextGridState == GridState.CanPut || nextGridState == GridState.NOPIECE;
+			return nextGridState == GridState.CanPut || nextGridState == GridState.Nopiece;
 		}
 
 		private bool IsMyPieceNextGrid(GridState gridState)
 		{
-			var gameState = gameManager.GetGameState();
-			return gameState == GameState.BLACKTURN && gridState == GridState.BLACK ||
-			       gameState == GameState.WHITETURN && gridState == GridState.WHITE;
+			var gameState = _gameManager.GetGameState();
+			return gameState == GameState.BlackTurn && gridState == GridState.Black ||
+			       gameState == GameState.WhiteTurn && gridState == GridState.White;
 		}
 	}
 }

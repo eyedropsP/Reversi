@@ -10,7 +10,7 @@ namespace NormalReversi.Models.Manager
 	{
 		public GameManager()
 		{
-			nowGameState.Value = GameState.BLACKTURN;
+			nowGameState.Value = GameState.BlackTurn;
 		}
 
 		private ReactiveProperty<GameState> nowGameState = new ReactiveProperty<GameState>();
@@ -23,12 +23,12 @@ namespace NormalReversi.Models.Manager
 
 		public void ChangeGameState()
 		{
-			nowGameState.Value = nowGameState.Value == GameState.BLACKTURN ? GameState.WHITETURN : GameState.BLACKTURN;
+			nowGameState.Value = nowGameState.Value == GameState.BlackTurn ? GameState.WhiteTurn : GameState.BlackTurn;
 		}
 
 		public void GameSet()
 		{
-			nowGameState.Value = GameState.GAMESET;
+			nowGameState.Value = GameState.GameSet;
 		}
 	}
 }

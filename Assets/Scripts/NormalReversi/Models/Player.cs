@@ -18,15 +18,15 @@ namespace NormalReversi.Models
 			var nowTurn = gameManager.GetGameState();
 			switch (nowTurn)
 			{
-				case GameState.BLACKTURN:
-					gridData.ChangeGridState(GridState.BLACK);
+				case GameState.BlackTurn:
+					gridData.ChangeGridState(GridState.Black);
 					piece.InitColor(Color.black);
 					break;	
-				case GameState.WHITETURN:
-					gridData.ChangeGridState(GridState.WHITE);
+				case GameState.WhiteTurn:
+					gridData.ChangeGridState(GridState.White);
 					piece.InitColor(Color.white);
 					break;
-				case GameState.GAMESET:
+				case GameState.GameSet:
 					break;
 				default:
 					Debug.Log("異常なゲームステートです。");

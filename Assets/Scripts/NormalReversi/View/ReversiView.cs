@@ -16,11 +16,9 @@ namespace NormalReversi.View
 				.Select(mousePosition =>
 				{
 					var raycastHit2D = new RaycastHit2D();
-					if (Camera.main != null)
-					{
-						var tmpRay = Camera.main.ScreenPointToRay(mousePosition);
-						raycastHit2D = Physics2D.Raycast(tmpRay.origin, tmpRay.direction);
-					}
+					if (Camera.main == null) return raycastHit2D;
+					var tmpRay = Camera.main.ScreenPointToRay(mousePosition);
+					raycastHit2D = Physics2D.Raycast(tmpRay.origin, tmpRay.direction);
 
 					return raycastHit2D;
 				}).Where(hit2D => hit2D.transform)

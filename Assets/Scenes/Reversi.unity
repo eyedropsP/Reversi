@@ -425,11 +425,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a957200f003b451f90036261a5f5deae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridPrefab: {fileID: 4499725146706828286, guid: b6a5b991eade43246b3c18705794b8f9,
+  _gridPrefab: {fileID: 4499725146706828286, guid: b6a5b991eade43246b3c18705794b8f9,
     type: 3}
-  gridBackgroundPrefab: {fileID: 2907933950908247152, guid: 4976756955eb5f34eab5b62e0fe32671,
+  _gridBackgroundPrefab: {fileID: 2907933950908247152, guid: 4976756955eb5f34eab5b62e0fe32671,
     type: 3}
-  piecePrefab: {fileID: 3162518395768966979, guid: b7bbe388b621e714b95de980e4eab43e,
+  _piecePrefab: {fileID: 3162518395768966979, guid: b7bbe388b621e714b95de980e4eab43e,
     type: 3}
 --- !u!224 &382794008
 RectTransform:
@@ -474,8 +474,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 221750b0ed3046b090239c48ca4bbcc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reversiView: {fileID: 382794009}
-  reversiGUI: {fileID: 385557720}
+  reversiView: {fileID: 0}
+  reversiGUI: {fileID: 0}
 --- !u!1 &385557719
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,11 +508,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ecdb16ea7b44e00b32d0a7e194e6c53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blackPieceCountText: {fileID: 1642879553}
-  whitePieceCountText: {fileID: 132924124}
-  gameStateText: {fileID: 1623877915}
-  nowTurnText: {fileID: 1886440451}
-  nowTurnPieceSpriteRenderer: {fileID: 1011351073194614077}
+  blackPieceCountText: {fileID: 0}
+  whitePieceCountText: {fileID: 0}
+  gameStateText: {fileID: 0}
+  nowTurnText: {fileID: 0}
+  nowTurnPieceSpriteRenderer: {fileID: 0}
 --- !u!114 &385557721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -679,6 +679,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1030442579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1030442580}
+  m_Layer: 0
+  m_Name: GameLifetimeScope
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1030442580
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030442579}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.589671, y: 2.611574, z: -0.90177035}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1623877913
 GameObject:
@@ -1177,4 +1207,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbc6917c49ac445ea89f0c3d0c6cccdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 1011351073194614077}
+  _spriteRenderer: {fileID: 1011351073194614077}

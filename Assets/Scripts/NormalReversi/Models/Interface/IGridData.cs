@@ -8,6 +8,7 @@ namespace NormalReversi.Models.Interface
 {
 	public interface IGridData
 	{
+		void SetSpriteRenderer(SpriteRenderer spriteRenderer);
 		IPiece Piece { get; }
 		Vector2 Location { get; }
 		GridState GridState { get; }
@@ -15,7 +16,7 @@ namespace NormalReversi.Models.Interface
 		HashSet<Tuple<int, int>> DirectionOffset { get; }
 		bool IsCanPut { get; }
 		void ChangeGridState(GridState gridState);
-		void Init(Point point, Vector2 location, GridState gridState);
+		void Initialize(Point point, Vector2 location, GridState gridState);
 		void AcceptPiece(IPiece piece);
 	}
 }

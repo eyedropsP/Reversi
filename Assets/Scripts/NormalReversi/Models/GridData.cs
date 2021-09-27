@@ -25,7 +25,12 @@ namespace NormalReversi.Models
         public IPiece Piece { get; private set; }
         public Vector2 Location { get; private set; }
 
-        public void Init(Point point, Vector2 location, GridState gridState)
+        public void SetSpriteRenderer(SpriteRenderer spriteRenderer)
+        {
+            _spriteRenderer = spriteRenderer;
+        }
+
+        public void Initialize(Point point, Vector2 location, GridState gridState)
         {
             Point = point;
             GridState = gridState;

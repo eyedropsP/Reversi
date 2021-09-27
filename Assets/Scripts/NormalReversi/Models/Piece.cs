@@ -12,5 +12,10 @@ namespace NormalReversi.Models
 		{
 			_spriteRenderer.color = color;
 		}
+
+		public void SetSpriteRenderer(SpriteRenderer spriteRenderer)
+		{
+			_spriteRenderer = spriteRenderer;
+		}
 	}
 }

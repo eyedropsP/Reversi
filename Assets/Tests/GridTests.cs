@@ -2,18 +2,20 @@
 using NormalReversi.Models.Enum;
 using NormalReversi.Models.Interface;
 using NormalReversi.Models.Manager;
-using NormalReversi.Models.Struct;
 using NUnit.Framework;
+using UniRx;
 using UnityEngine;
 
 namespace Tests
 {
     public class GridTests
     {
+        private readonly CompositeDisposable _disposable = new CompositeDisposable();
         private readonly GameObject _gridManagerGameObject = new GameObject();
         private readonly GameObject _gridDataGameObject = new GameObject();
         private readonly GameObject _pieceGameObject = new GameObject();
         private readonly GameObject _backgroundPrefab = new GameObject();
+        private readonly IPlayer _player = new Player();
         private IGridManager _gridManager;
         private IGameManager _gameManager;
 
@@ -42,6 +44,12 @@ namespace Tests
 
             _gridManager.RefreshGameManager(_gameManager);
             _gridManager.Initialize();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _disposable.Dispose();
         }
 
         [Test]
@@ -87,33 +95,30 @@ namespace Tests
         [Test]
         public void 反転のテスト()
         {
-            IPlayer player = new Player();
-            var gridData = _gridDataGameObject.GetComponent<IGridData>();
-            gridData.Initialize(new Point(5, 3), Vector2.zero, GridState.Black);
-            var playerPutGridData = player.Put(gridData, _gameManager);
-            _gridManager.ReceivePieceFromPlayer(playerPutGridData);
-            _gridManager.FlipPiece(playerPutGridData);
+            ProgressTurn(5,3);
 
-            _gameManager.ChangeGameState();
-
-            _gridManager.RefreshGameManager(_gameManager);
-            _gridManager.RefreshGrid();
+            Assert.That(_gridManager.CanPutGridCount.Value, Is.EqualTo(3));
+            Assert.That(_gridManager.BlackPieceCount.Value, Is.EqualTo(4));
+            Assert.That(_gridManager.WhitePieceCount.Value, Is.EqualTo(1));
+            Assert.That(_gridManager.GetPiece(3, 2).GridState, Is.EqualTo(GridState.CanPut));
+            Assert.That(_gridManager.GetPiece(5, 4).GridState, Is.EqualTo(GridState.CanPut));
+            Assert.That(_gridManager.GetPiece(5, 2).GridState, Is.EqualTo(GridState.CanPut));
         }
 
         [Test]
         public void 白最短全滅()
         {
-            var player = new Player();
-            ProgressTurn(player, new Point(5, 3), GridState.Black);
-            ProgressTurn(player, new Point(5, 2), GridState.White);
-            ProgressTurn(player, new Point(4, 2), GridState.Black);
-            ProgressTurn(player, new Point(5, 4), GridState.White);
-            ProgressTurn(player, new Point(4, 5), GridState.Black);
-            ProgressTurn(player, new Point(3, 6), GridState.White);
-            ProgressTurn(player, new Point(3, 5), GridState.Black);
-            ProgressTurn(player, new Point(3, 2), GridState.Black);
-            ProgressTurn(player, new Point(2, 4), GridState.White);
-            ProgressTurn(player, new Point(1, 4), GridState.Black);
+            ProgressTurn(5, 3);
+            ProgressTurn(5, 2);
+            ProgressTurn(4, 2);
+            ProgressTurn(5, 4);
+            ProgressTurn(4, 5);
+            ProgressTurn(3, 6);
+            ProgressTurn(3, 5);
+            ProgressTurn(3, 2);
+            ProgressTurn(2, 4);
+            ProgressTurn(1, 4);
+
             Assert.That(_gridManager.BlackPieceCount.Value, Is.Zero);
             Assert.That(_gridManager.WhitePieceCount.Value, Is.EqualTo(14));
         }
@@ -121,24 +126,73 @@ namespace Tests
         [Test]
         public void 黒最短全滅()
         {
-            var player = new Player();
-            ProgressTurn(player, new Point(5, 3), GridState.Black);
-            ProgressTurn(player, new Point(3, 2), GridState.White);
-            ProgressTurn(player, new Point(2, 3), GridState.Black);
-            ProgressTurn(player, new Point(5, 4), GridState.White);
-            ProgressTurn(player, new Point(4, 1), GridState.Black);
-            ProgressTurn(player, new Point(5, 2), GridState.White);
-            ProgressTurn(player, new Point(6, 3), GridState.Black);
-            ProgressTurn(player, new Point(4, 2), GridState.Black);
-            ProgressTurn(player, new Point(4, 5), GridState.White);
+            ProgressTurn(5, 3);
+            ProgressTurn(3, 2);
+            ProgressTurn(2, 3);
+            ProgressTurn(5, 4);
+            ProgressTurn(4, 1);
+            ProgressTurn(5, 2);
+            ProgressTurn(6, 3);
+            ProgressTurn(4, 2);
+            ProgressTurn(4, 5);
+
             Assert.That(_gridManager.BlackPieceCount.Value, Is.EqualTo(13));
             Assert.That(_gridManager.WhitePieceCount.Value, Is.Zero);
         }
 
-        private void ProgressTurn(IPlayer player, Point point, GridState state)
+        [Test]
+        public void 終局11手()
         {
-            var gridData = _gridManager.GetPiece(point.X, point.Y);
-            var playerPutGridData = player.Put(gridData, _gameManager);
+            ProgressTurn(5, 3);
+            ProgressTurn(5, 4);
+            ProgressTurn(2, 5);
+            ProgressTurn(4, 2);
+            ProgressTurn(5, 1);
+            ProgressTurn(6, 2);
+            ProgressTurn(6, 4);
+            ProgressTurn(4, 0);
+            ProgressTurn(6, 0);
+            ProgressTurn(6, 3);
+            ProgressTurn(7, 3);
+
+            Assert.That(_gridManager.BlackPieceCount.Value, Is.EqualTo(14));
+            Assert.That(_gridManager.WhitePieceCount.Value, Is.EqualTo(1));
+            Assert.That(_gridManager.CanPutGridCount.Value, Is.Zero);
+        }
+
+        [Test]
+        public void パス最短9手()
+        {
+            ProgressTurn(5,3);
+            ProgressTurn(5,2);
+            ProgressTurn(3,5);
+            ProgressTurn(6,3);
+            ProgressTurn(7,3);
+            ProgressTurn(7,4);
+            ProgressTurn(5,1);
+            ProgressTurn(7,2);
+            
+            _gridManager.CanPutGridCount
+                .Where(value => value == 0)
+                .Subscribe(value =>
+                {
+                    _gameManager.ChangeGameState();
+                    _gridManager.RefreshGameManager(_gameManager);
+                    _gridManager.RefreshGrid();
+
+                    if (_gridManager.CanPutGridCount.Value == 0)
+                    {
+                        _gameManager.GameSet();
+                    }
+                }).AddTo(_disposable);
+            
+            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.WhiteTurn));
+        }
+
+        private void ProgressTurn(int x, int y)
+        {
+            var gridData = _gridManager.GetPiece(x, y);
+            var playerPutGridData = _player.Put(gridData, _gameManager);
             _gridManager.ReceivePieceFromPlayer(playerPutGridData);
             _gridManager.FlipPiece(playerPutGridData);
             _gameManager.ChangeGameState();

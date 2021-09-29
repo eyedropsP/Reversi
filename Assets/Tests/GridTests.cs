@@ -44,9 +44,23 @@ namespace Tests
 
             _gridManager.RefreshGameManager(_gameManager);
             _gridManager.Initialize();
+
+            _gridManager.CanPutGridCount
+                .Where(value => value == 0)
+                .Subscribe(value =>
+                {
+                    _gameManager.ChangeGameState();
+                    _gridManager.RefreshGameManager(_gameManager);
+                    _gridManager.RefreshGrid();
+
+                    if (_gridManager.CanPutGridCount.Value == 0)
+                    {
+                        _gameManager.GameSet();
+                    }
+                }).AddTo(_disposable);
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             _disposable.Dispose();
@@ -76,23 +90,6 @@ namespace Tests
         }
 
         [Test]
-        public void 黒を53に置いた時の白が置けるマスのテスト()
-        {
-            IPlayer player = new Player();
-            var gridData = _gridManager.GetPiece(5, 3);
-            var playerPutGridData = player.Put(gridData, _gameManager);
-            _gridManager.ReceivePieceFromPlayer(playerPutGridData);
-            _gridManager.FlipPiece(playerPutGridData);
-            _gameManager.ChangeGameState();
-            _gridManager.RefreshGameManager(_gameManager);
-            _gridManager.RefreshGrid();
-
-            Assert.That(_gridManager.GetPiece(3, 2).GridState, Is.EqualTo(GridState.CanPut));
-            Assert.That(_gridManager.GetPiece(5, 4).GridState, Is.EqualTo(GridState.CanPut));
-            Assert.That(_gridManager.GetPiece(5, 2).GridState, Is.EqualTo(GridState.CanPut));
-        }
-
-        [Test]
         public void 反転のテスト()
         {
             ProgressTurn(5,3);
@@ -118,9 +115,12 @@ namespace Tests
             ProgressTurn(3, 2);
             ProgressTurn(2, 4);
             ProgressTurn(1, 4);
+            var outcome = _gridManager.JudgeWinner();
 
             Assert.That(_gridManager.BlackPieceCount.Value, Is.Zero);
             Assert.That(_gridManager.WhitePieceCount.Value, Is.EqualTo(14));
+            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
+            Assert.That(outcome, Is.EqualTo(Outcome.White));
         }
 
         [Test]
@@ -135,9 +135,12 @@ namespace Tests
             ProgressTurn(6, 3);
             ProgressTurn(4, 2);
             ProgressTurn(4, 5);
+            var outcome = _gridManager.JudgeWinner();
 
             Assert.That(_gridManager.BlackPieceCount.Value, Is.EqualTo(13));
             Assert.That(_gridManager.WhitePieceCount.Value, Is.Zero);
+            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
+            Assert.That(outcome, Is.EqualTo(Outcome.Black));
         }
 
         [Test]
@@ -154,10 +157,13 @@ namespace Tests
             ProgressTurn(6, 0);
             ProgressTurn(6, 3);
             ProgressTurn(7, 3);
-
+            var outcome = _gridManager.JudgeWinner();
+            
             Assert.That(_gridManager.BlackPieceCount.Value, Is.EqualTo(14));
             Assert.That(_gridManager.WhitePieceCount.Value, Is.EqualTo(1));
             Assert.That(_gridManager.CanPutGridCount.Value, Is.Zero);
+            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
+            Assert.That(outcome, Is.EqualTo(Outcome.Black));
         }
 
         [Test]
@@ -172,23 +178,9 @@ namespace Tests
             ProgressTurn(5,1);
             ProgressTurn(7,2);
             
-            _gridManager.CanPutGridCount
-                .Where(value => value == 0)
-                .Subscribe(value =>
-                {
-                    _gameManager.ChangeGameState();
-                    _gridManager.RefreshGameManager(_gameManager);
-                    _gridManager.RefreshGrid();
-
-                    if (_gridManager.CanPutGridCount.Value == 0)
-                    {
-                        _gameManager.GameSet();
-                    }
-                }).AddTo(_disposable);
-            
             Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.WhiteTurn));
         }
-
+        
         private void ProgressTurn(int x, int y)
         {
             var gridData = _gridManager.GetPiece(x, y);

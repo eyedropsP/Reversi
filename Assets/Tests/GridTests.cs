@@ -19,25 +19,30 @@ namespace Tests
         private IGridManager _gridManager;
         private IGameManager _gameManager;
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _gridManager = _gridManagerGameObject.AddComponent<GridManager>();
+            _gridDataGameObject.AddComponent<GridData>();
+            _gridDataGameObject.AddComponent<SpriteRenderer>();
+            _gridDataGameObject.AddComponent<BoxCollider2D>();
+            _pieceGameObject.AddComponent<Piece>();
+            _pieceGameObject.AddComponent<SpriteRenderer>();
+            _backgroundPrefab.AddComponent<SpriteRenderer>();
+        }
+        
         [SetUp]
         public void SetUp()
         {
-            _gridManager = _gridManagerGameObject.AddComponent<GridManager>().GetComponent<GridManager>();
             _gameManager = new GameManager();
+            _gridManager = _gridManagerGameObject.GetComponent<GridManager>();
 
-            _gridDataGameObject.AddComponent<GridData>();
-            _gridDataGameObject.AddComponent<SpriteRenderer>();
             var gridDataSpriteRenderer = _gridDataGameObject.GetComponent<SpriteRenderer>();
             _gridDataGameObject.GetComponent<IGridData>().SetSpriteRenderer(gridDataSpriteRenderer);
-            _gridDataGameObject.AddComponent<BoxCollider2D>();
 
-            _pieceGameObject.AddComponent<Piece>();
-            _pieceGameObject.AddComponent<SpriteRenderer>();
             var pieceSpriteRenderer = _pieceGameObject.GetComponent<SpriteRenderer>();
             _pieceGameObject.GetComponent<IPiece>().SetSpriteRenderer(pieceSpriteRenderer);
-
-            _backgroundPrefab.AddComponent<SpriteRenderer>();
-
+            
             _gridManager.SetGridPrefab(_gridDataGameObject);
             _gridManager.SetPiecePrefab(_pieceGameObject);
             _gridManager.SetBackgroundPrefab(_backgroundPrefab);
@@ -61,7 +66,7 @@ namespace Tests
         }
 
         [OneTimeTearDown]
-        public void TearDown()
+        public void OneTimeTearDown()
         {
             _disposable.Dispose();
         }

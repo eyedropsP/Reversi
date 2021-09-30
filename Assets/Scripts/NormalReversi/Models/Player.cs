@@ -9,12 +9,12 @@ namespace NormalReversi.Models
 	[UsedImplicitly]
 	public class Player : IPlayer
 	{
-		public IGridData Put(IGridData gridData, IGameManager gameManager)
+		public IGridData Put(IGridData gridData, IGameStateManager gameStateManager)
 		{
 			var pieceGameObject = GetPieceFromResource();
 			Object.Instantiate(pieceGameObject, gridData.Location, Quaternion.identity)
 				.TryGetComponent(out IPiece piece);
-			var nowTurn = gameManager.GetGameState();
+			var nowTurn = gameStateManager.NowGameState.Value;
 			switch (nowTurn)
 			{
 				case GameState.BlackTurn:

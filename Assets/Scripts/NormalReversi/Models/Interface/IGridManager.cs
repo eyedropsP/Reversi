@@ -18,7 +18,7 @@ namespace NormalReversi.Models.Interface
         IReadOnlyReactiveProperty<int> BlackPieceCount { get; }
         IReadOnlyReactiveProperty<int> WhitePieceCount { get; }
         IReadOnlyReactiveProperty<int> CanPutGridCount { get; }
-        void RefreshGameManager(IGameManager gameManager);
+        void RefreshGameManager(IGameStateManager gameStateManager);
         void RefreshGrid();
         void ReceivePieceFromPlayer(IGridData gridData);
         void FlipPiece(IGridData gridData);

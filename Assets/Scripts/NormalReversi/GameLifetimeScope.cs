@@ -16,7 +16,7 @@ namespace NormalReversi
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<ReversiPresenter>();
-            builder.Register<IGameManager, GameManager>(Lifetime.Singleton);
+            builder.Register<IGameStateManager, GameStateManager>(Lifetime.Singleton);
             builder.Register<IPlayer, Player>(Lifetime.Singleton);
             builder.RegisterComponent(_gridManager)
                 .AsImplementedInterfaces();

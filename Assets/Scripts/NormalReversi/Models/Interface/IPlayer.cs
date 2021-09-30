@@ -2,6 +2,6 @@
 {
 	public interface IPlayer
 	{
-		IGridData Put(IGridData gridData, IGameManager gameManager);
+		IGridData Put(IGridData gridData, IGameStateManager gameStateManager);
 	}
 }

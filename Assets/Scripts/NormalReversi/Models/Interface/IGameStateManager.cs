@@ -3,12 +3,10 @@ using UniRx;
 
 namespace NormalReversi.Models.Interface
 {
-	public interface IGameManager
+	public interface IGameStateManager
 	{
 		IReadOnlyReactiveProperty<GameState> NowGameState { get; }
 		
-		GameState GetGameState();
-
 		void ChangeGameState();
 
 		void GameSet();

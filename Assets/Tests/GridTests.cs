@@ -17,7 +17,7 @@ namespace Tests
         private readonly GameObject _backgroundPrefab = new GameObject();
         private readonly IPlayer _player = new Player();
         private IGridManager _gridManager;
-        private IGameManager _gameManager;
+        private IGameStateManager _gameStateManager;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -34,7 +34,7 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            _gameManager = new GameManager();
+            _gameStateManager = new GameStateManager();
             _gridManager = _gridManagerGameObject.GetComponent<GridManager>();
 
             var gridDataSpriteRenderer = _gridDataGameObject.GetComponent<SpriteRenderer>();
@@ -47,20 +47,20 @@ namespace Tests
             _gridManager.SetPiecePrefab(_pieceGameObject);
             _gridManager.SetBackgroundPrefab(_backgroundPrefab);
 
-            _gridManager.RefreshGameManager(_gameManager);
+            _gridManager.RefreshGameManager(_gameStateManager);
             _gridManager.Initialize();
 
             _gridManager.CanPutGridCount
                 .Where(value => value == 0)
                 .Subscribe(value =>
                 {
-                    _gameManager.ChangeGameState();
-                    _gridManager.RefreshGameManager(_gameManager);
+                    _gameStateManager.ChangeGameState();
+                    _gridManager.RefreshGameManager(_gameStateManager);
                     _gridManager.RefreshGrid();
 
                     if (_gridManager.CanPutGridCount.Value == 0)
                     {
-                        _gameManager.GameSet();
+                        _gameStateManager.GameSet();
                     }
                 }).AddTo(_disposable);
         }
@@ -124,7 +124,7 @@ namespace Tests
 
             Assert.That(_gridManager.BlackPieceCount.Value, Is.Zero);
             Assert.That(_gridManager.WhitePieceCount.Value, Is.EqualTo(14));
-            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
+            Assert.That(_gameStateManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
             Assert.That(outcome, Is.EqualTo(Outcome.White));
         }
 
@@ -144,7 +144,7 @@ namespace Tests
 
             Assert.That(_gridManager.BlackPieceCount.Value, Is.EqualTo(13));
             Assert.That(_gridManager.WhitePieceCount.Value, Is.Zero);
-            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
+            Assert.That(_gameStateManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
             Assert.That(outcome, Is.EqualTo(Outcome.Black));
         }
 
@@ -167,7 +167,7 @@ namespace Tests
             Assert.That(_gridManager.BlackPieceCount.Value, Is.EqualTo(14));
             Assert.That(_gridManager.WhitePieceCount.Value, Is.EqualTo(1));
             Assert.That(_gridManager.CanPutGridCount.Value, Is.Zero);
-            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
+            Assert.That(_gameStateManager.NowGameState.Value, Is.EqualTo(GameState.GameSet));
             Assert.That(outcome, Is.EqualTo(Outcome.Black));
         }
 
@@ -183,17 +183,17 @@ namespace Tests
             ProgressTurn(5,1);
             ProgressTurn(7,2);
             
-            Assert.That(_gameManager.NowGameState.Value, Is.EqualTo(GameState.WhiteTurn));
+            Assert.That(_gameStateManager.NowGameState.Value, Is.EqualTo(GameState.WhiteTurn));
         }
         
         private void ProgressTurn(int x, int y)
         {
             var gridData = _gridManager.GetPiece(x, y);
-            var playerPutGridData = _player.Put(gridData, _gameManager);
+            var playerPutGridData = _player.Put(gridData, _gameStateManager);
             _gridManager.ReceivePieceFromPlayer(playerPutGridData);
             _gridManager.FlipPiece(playerPutGridData);
-            _gameManager.ChangeGameState();
-            _gridManager.RefreshGameManager(_gameManager);
+            _gameStateManager.ChangeGameState();
+            _gridManager.RefreshGameManager(_gameStateManager);
             _gridManager.RefreshGrid();
         }
     }

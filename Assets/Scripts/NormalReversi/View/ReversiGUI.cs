@@ -2,21 +2,22 @@
 using NormalReversi.Models.Enum;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace NormalReversi.View
 {
 	public class ReversiGUI : MonoBehaviour
 	{
-		[SerializeField] private TextMeshProUGUI blackPieceCountText;
-		[SerializeField] private TextMeshProUGUI whitePieceCountText;
-		[SerializeField] private TextMeshProUGUI gameStateText;
-		[SerializeField] private TextMeshProUGUI nowTurnText;
-		[SerializeField] private SpriteRenderer nowTurnPieceSpriteRenderer;
+		[FormerlySerializedAs("blackPieceCountText")] [SerializeField] private TextMeshProUGUI _blackPieceCountText;
+		[FormerlySerializedAs("whitePieceCountText")] [SerializeField] private TextMeshProUGUI _whitePieceCountText;
+		[FormerlySerializedAs("gameStateText")] [SerializeField] private TextMeshProUGUI _gameStateText;
+		[FormerlySerializedAs("nowTurnText")] [SerializeField] private TextMeshProUGUI _nowTurnText;
+		[FormerlySerializedAs("nowTurnPieceSpriteRenderer")] [SerializeField] private SpriteRenderer _nowTurnPieceSpriteRenderer;
 		
 		public void SetPieceCount(int blackPieceCount, int whitePieceCount)
 		{
-			blackPieceCountText.text = $"BLACK : {blackPieceCount}";
-			whitePieceCountText.text = $"WHITE : {whitePieceCount}";
+			_blackPieceCountText.text = $"BLACK : {blackPieceCount}";
+			_whitePieceCountText.text = $"WHITE : {whitePieceCount}";
 		}
 
 		public void ShowNowTurn(GameState gameState)
@@ -24,14 +25,14 @@ namespace NormalReversi.View
 			switch (gameState)
 			{
 				case GameState.BlackTurn:
-					nowTurnPieceSpriteRenderer.color = Color.black;
+					_nowTurnPieceSpriteRenderer.color = Color.black;
 					break;
 				case GameState.WhiteTurn:
-					nowTurnPieceSpriteRenderer.color = Color.white;
+					_nowTurnPieceSpriteRenderer.color = Color.white;
 					break;
 				case GameState.GameSet:
-					nowTurnText.text = default;
-					nowTurnPieceSpriteRenderer.color = new Color(0,0,0,0);
+					_nowTurnText.text = default;
+					_nowTurnPieceSpriteRenderer.color = new Color(0,0,0,0);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(gameState), gameState, null);
@@ -40,7 +41,7 @@ namespace NormalReversi.View
 
 		public void ShowWinner(Outcome outcome)
 		{
-			gameStateText.text =
+			_gameStateText.text =
 				outcome != Outcome.Draw ?
 					$"GAME SET!!\n{outcome} Win!!" :
 					$"GAME SET!!\nDRAW...";

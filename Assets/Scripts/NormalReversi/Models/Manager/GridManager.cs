@@ -25,7 +25,7 @@ namespace NormalReversi.Models.Manager
         private const float EndPoint = 3.85f;
         private const float Interval = 1.1f;
         private readonly IGridData[,] _gridDatas = new IGridData[BoardSize, BoardSize];
-        private IGameManager _gameManager;
+        private IGameStateManager _gameStateManager;
 
         public void SetGridPrefab(GameObject gridPrefab)
         {
@@ -42,8 +42,10 @@ namespace NormalReversi.Models.Manager
             _gridBackgroundPrefab = backgroundPrefab.GetComponent<SpriteRenderer>();
         }
 
-        public void SetPiece(int x, int y, IGridData gridData)
+        public void SetPiece(IGridData gridData)
         {
+            var x = gridData.Point.X;
+            var y = gridData.Point.Y;
             if (_gridDatas[x, y].IsCanPut)
             {
                 _gridDatas[x, y] = gridData;
@@ -96,9 +98,9 @@ namespace NormalReversi.Models.Manager
         }
 
         // ReSharper disable once ParameterHidesMember
-        public void RefreshGameManager(IGameManager gameManager)
+        public void RefreshGameManager(IGameStateManager gameStateManager)
         {
-            _gameManager = gameManager;
+            _gameStateManager = gameStateManager;
         }
 
         public void RefreshGrid()
@@ -137,12 +139,7 @@ namespace NormalReversi.Models.Manager
             _whitePieceCount.Value = whitePiece;
             _canPutGridCount.Value = canPutGrid;
         }
-
-        public void ReceivePieceFromPlayer(IGridData gridData)
-        {
-            _gridDatas[gridData.Point.X, gridData.Point.Y] = gridData;
-        }
-
+        
         public void FlipPiece(IGridData gridData)
         {
             foreach (var (offsetX, offsetY) in gridData.DirectionOffset)
@@ -251,7 +248,7 @@ namespace NormalReversi.Models.Manager
 
         private bool IsMyPieceNextGrid(GridState gridState)
         {
-            var gameState = _gameManager.GetGameState();
+            var gameState = _gameStateManager.NowGameState.Value;
             return gameState == GameState.BlackTurn && gridState == GridState.Black ||
                    gameState == GameState.WhiteTurn && gridState == GridState.White;
         }

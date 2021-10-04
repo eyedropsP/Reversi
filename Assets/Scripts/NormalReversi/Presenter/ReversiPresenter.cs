@@ -1,36 +1,48 @@
 ﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using NormalReversi.Models.Enum;
 using NormalReversi.Models.Interface;
 using NormalReversi.Models.Manager;
 using NormalReversi.View;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using VContainer.Unity;
+using Object = UnityEngine.Object;
 
 namespace NormalReversi.Presenter
 {
-    public class ReversiPresenter : IStartable, IDisposable
+    public class ReversiPresenter : IDisposable, IAsyncStartable
     {
         private readonly ReversiView _reversiView;
         private readonly ReversiGUI _reversiGUI;
         private readonly IGameStateManager _gameStateManager;
         private readonly IGridManager _gridManager;
-        private readonly IPlayer _player;
 
         private readonly CompositeDisposable _disposable = new CompositeDisposable();
 
-        public ReversiPresenter(IGameStateManager gameStateManager, IGridManager gridManager, IPlayer player,
+        public ReversiPresenter(IGameStateManager gameStateManager, IGridManager gridManager,
             ReversiView reversiView, ReversiGUI reversiGUI)
         {
             _gameStateManager = gameStateManager;
             _gridManager = gridManager;
-            _player = player;
             _reversiView = reversiView;
             _reversiGUI = reversiGUI;
         }
 
-        void IStartable.Start()
+        public void Dispose() => _disposable.Dispose();
+
+        public async UniTask StartAsync(CancellationToken cancellation)
         {
+            // var handle = Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/MainPage.prefab");
+            // handle.Completed += op =>
+            // {
+            //     if (op.Status == AsyncOperationStatus.Succeeded)
+            //         Object.Instantiate(op.Result);
+            // };
+            
             _gridManager.RefreshGameManager(_gameStateManager);
             _gridManager.Initialize();
 
@@ -42,9 +54,8 @@ namespace NormalReversi.Presenter
                 {
                     try
                     {
-                        var playerPutGridData = _player.Put(gridData, _gameStateManager);
-                        _gridManager.ReceivePieceFromPlayer(playerPutGridData);
-                        _gridManager.FlipPiece(playerPutGridData);
+                        _gridManager.SetPiece(gridData);
+                        _gridManager.FlipPiece(gridData);
                         _gameStateManager.ChangeGameState();
                         _gridManager.RefreshGameManager(_gameStateManager);
                         _gridManager.RefreshGrid();
@@ -99,7 +110,5 @@ namespace NormalReversi.Presenter
                 })
                 .AddTo(_disposable);
         }
-
-        public void Dispose() => _disposable.Dispose();
     }
 }

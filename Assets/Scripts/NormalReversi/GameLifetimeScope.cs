@@ -12,12 +12,10 @@ namespace NormalReversi
     public class GameLifetimeScope : LifetimeScope
     {
         [SerializeField] private GridManager _gridManager;
-        
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<ReversiPresenter>();
             builder.Register<IGameStateManager, GameStateManager>(Lifetime.Singleton);
-            builder.Register<IPlayer, Player>(Lifetime.Singleton);
             builder.RegisterComponent(_gridManager)
                 .AsImplementedInterfaces();
             builder.RegisterComponentInHierarchy<ReversiView>();

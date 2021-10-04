@@ -7,12 +7,12 @@ namespace NormalReversi.Models.Interface
     public interface IGridManager
     {
         void Initialize();
-
+        
         // ここ消せるように頑張る
         void SetGridPrefab(GameObject gridPrefab);
         void SetPiecePrefab(GameObject piecePrefab);
         void SetBackgroundPrefab(GameObject backgroundPrefab);
-        void SetPiece(int x, int y, IGridData gridData);
+        void SetPiece(IGridData gridData);
         IGridData GetPiece(int x, int y);
         
         IReadOnlyReactiveProperty<int> BlackPieceCount { get; }
@@ -20,7 +20,6 @@ namespace NormalReversi.Models.Interface
         IReadOnlyReactiveProperty<int> CanPutGridCount { get; }
         void RefreshGameManager(IGameStateManager gameStateManager);
         void RefreshGrid();
-        void ReceivePieceFromPlayer(IGridData gridData);
         void FlipPiece(IGridData gridData);
         Outcome JudgeWinner();
     }

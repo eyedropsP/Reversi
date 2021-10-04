@@ -7,6 +7,7 @@ namespace NormalReversi.View
 {
 	public class ReversiView : MonoBehaviour
 	{
+		private Transform _putLocationTransform;
 		public IObservable<IGridData> OnGridClicked()
 		{
 			var gridDataObservable = Observable
@@ -24,10 +25,15 @@ namespace NormalReversi.View
 				}).Where(hit2D => hit2D.transform)
 				.Select(hit2D =>
 				{
-					hit2D.transform.TryGetComponent(out IGridData gridData);
+					_putLocationTransform = hit2D.transform;
+					_putLocationTransform.TryGetComponent(out IGridData gridData);
 					return gridData;
 				});
 			return gridDataObservable;
+		}
+
+		public void SetPieceColor(Color color)
+		{
 		}
 	}
 }

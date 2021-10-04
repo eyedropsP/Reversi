@@ -15,7 +15,6 @@ namespace Tests
         private readonly GameObject _gridDataGameObject = new GameObject();
         private readonly GameObject _pieceGameObject = new GameObject();
         private readonly GameObject _backgroundPrefab = new GameObject();
-        private readonly IPlayer _player = new Player();
         private IGridManager _gridManager;
         private IGameStateManager _gameStateManager;
 
@@ -189,9 +188,8 @@ namespace Tests
         private void ProgressTurn(int x, int y)
         {
             var gridData = _gridManager.GetPiece(x, y);
-            var playerPutGridData = _player.Put(gridData, _gameStateManager);
-            _gridManager.ReceivePieceFromPlayer(playerPutGridData);
-            _gridManager.FlipPiece(playerPutGridData);
+            _gridManager.SetPiece(gridData);
+            _gridManager.FlipPiece(gridData);
             _gameStateManager.ChangeGameState();
             _gridManager.RefreshGameManager(_gameStateManager);
             _gridManager.RefreshGrid();

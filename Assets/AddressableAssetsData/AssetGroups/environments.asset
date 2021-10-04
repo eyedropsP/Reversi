@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: environments
+  m_EditorClassIdentifier: 
+  m_GroupName: environments
+  m_Data:
+    m_SerializedData: []
+  m_GUID: d5a3c663f23e445419e53ace0d3e5fc7
+  m_SerializeEntries:
+  - m_GUID: b6a5b991eade43246b3c18705794b8f9
+    m_Address: Assets/Prefabs/Grid.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4976756955eb5f34eab5b62e0fe32671
+    m_Address: Assets/Prefabs/GridBackground.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b7bbe388b621e714b95de980e4eab43e
+    m_Address: Assets/Prefabs/Piece.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: f693bf394de1bcc409f88198cdfcca73, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 3fa340a41a2cf3947b33463424ada559, type: 2}
+    - {fileID: 11400000, guid: c04b9e3d67028544991c81f3606312a8, type: 2}

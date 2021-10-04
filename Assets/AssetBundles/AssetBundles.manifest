@@ -1,0 +1,11 @@
+ManifestFileVersion: 0
+CRC: 638208763
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: mainpage
+      Dependencies:
+        Dependency_0: environments
+    Info_1:
+      Name: environments
+      Dependencies: {}

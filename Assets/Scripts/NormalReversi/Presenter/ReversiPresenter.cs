@@ -36,6 +36,11 @@ namespace NormalReversi.Presenter
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
+            var assetBundle = await AssetBundle.LoadFromFileAsync("Assets/AssetBundles/environments");
+            var pieceObject = await assetBundle.LoadAssetAsync<GameObject>("Piece");
+            
+            Debug.Log(pieceObject.name);
+            
             // var handle = Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/MainPage.prefab");
             // handle.Completed += op =>
             // {

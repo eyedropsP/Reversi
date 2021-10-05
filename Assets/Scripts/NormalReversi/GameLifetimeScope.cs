@@ -1,4 +1,3 @@
-using NormalReversi.Models;
 using NormalReversi.Models.Interface;
 using NormalReversi.Models.Manager;
 using NormalReversi.Presenter;

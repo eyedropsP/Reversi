@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using NormalReversi.Models.Interface;
 using UniRx;
+using UnityEditor;
 using UnityEngine;
 
 namespace NormalReversi.View
@@ -22,7 +24,8 @@ namespace NormalReversi.View
 					raycastHit2D = Physics2D.Raycast(tmpRay.origin, tmpRay.direction);
 
 					return raycastHit2D;
-				}).Where(hit2D => hit2D.transform)
+				})
+				.Where(hit2D => hit2D.transform)
 				.Select(hit2D =>
 				{
 					_putLocationTransform = hit2D.transform;
@@ -32,8 +35,12 @@ namespace NormalReversi.View
 			return gridDataObservable;
 		}
 
-		public void SetPieceColor(Color color)
+		public GameObject SetPieceColor(Color color)
 		{
+			var loadAssetAtPath = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Piece");
+			var spriteRenderer = loadAssetAtPath.GetComponent<SpriteRenderer>();
+			spriteRenderer.color = color;
+			return loadAssetAtPath;
 		}
 	}
 }

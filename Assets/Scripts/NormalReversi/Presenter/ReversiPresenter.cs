@@ -7,51 +7,36 @@ using NormalReversi.Models.Manager;
 using NormalReversi.View;
 using UniRx;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using VContainer.Unity;
-using Object = UnityEngine.Object;
 
 namespace NormalReversi.Presenter
 {
     public class ReversiPresenter : IDisposable, IAsyncStartable
     {
-        private readonly ReversiView _reversiView;
-        private readonly ReversiGUI _reversiGUI;
+        private readonly ReversiObjectView _reversiObjectView;
+        private readonly ReversiGUIView _reversiGUIView;
         private readonly IGameStateManager _gameStateManager;
         private readonly IGridManager _gridManager;
 
         private readonly CompositeDisposable _disposable = new CompositeDisposable();
 
         public ReversiPresenter(IGameStateManager gameStateManager, IGridManager gridManager,
-            ReversiView reversiView, ReversiGUI reversiGUI)
+            ReversiObjectView reversiObjectView, ReversiGUIView reversiGUIView)
         {
             _gameStateManager = gameStateManager;
             _gridManager = gridManager;
-            _reversiView = reversiView;
-            _reversiGUI = reversiGUI;
+            _reversiObjectView = reversiObjectView;
+            _reversiGUIView = reversiGUIView;
         }
 
         public void Dispose() => _disposable.Dispose();
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
-            var assetBundle = await AssetBundle.LoadFromFileAsync("Assets/AssetBundles/environments");
-            var pieceObject = await assetBundle.LoadAssetAsync<GameObject>("Piece");
-            
-            Debug.Log(pieceObject.name);
-            
-            // var handle = Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/MainPage.prefab");
-            // handle.Completed += op =>
-            // {
-            //     if (op.Status == AsyncOperationStatus.Succeeded)
-            //         Object.Instantiate(op.Result);
-            // };
-            
             _gridManager.RefreshGameManager(_gameStateManager);
             _gridManager.Initialize();
 
-            _reversiView.OnGridClicked()
+            _reversiObjectView.OnGridClicked()
                 .Where(_ => _gridManager.CanPutGridCount.Value > 0)
                 .Where(gridData => gridData.IsCanPut)
                 .TakeUntil(_gameStateManager.NowGameState.Where(state => state == GameState.GameSet))
@@ -77,7 +62,7 @@ namespace NormalReversi.Presenter
 
             blackPieceCountReactiveProperty
                 .CombineLatest(whitePieceCountReactiveProperty, (item1, item2) => new Tuple<int, int>(item1, item2))
-                .Subscribe(tuple => _reversiGUI.SetPieceCount(tuple.Item1, tuple.Item2))
+                .Subscribe(tuple => _reversiGUIView.SetPieceCount(tuple.Item1, tuple.Item2))
                 .AddTo(_disposable);
 
             blackPieceCountReactiveProperty
@@ -103,7 +88,7 @@ namespace NormalReversi.Presenter
                 .AddTo(_disposable);
 
             _gameStateManager.NowGameState
-                .Subscribe(gameState => { _reversiGUI.ShowNowTurn(gameState); })
+                .Subscribe(gameState => { _reversiGUIView.ShowNowTurn(gameState); })
                 .AddTo(_disposable);
 
             _gameStateManager.NowGameState
@@ -111,7 +96,7 @@ namespace NormalReversi.Presenter
                 .Subscribe(_ =>
                 {
                     var outcome = _gridManager.JudgeWinner();
-                    _reversiGUI.ShowWinner(outcome);
+                    _reversiGUIView.ShowWinner(outcome);
                 })
                 .AddTo(_disposable);
         }

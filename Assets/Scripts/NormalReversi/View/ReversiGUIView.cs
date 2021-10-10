@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace NormalReversi.View
 {
-	public class ReversiGUI : MonoBehaviour
+	public class ReversiGUIView : MonoBehaviour
 	{
 		[FormerlySerializedAs("blackPieceCountText")] [SerializeField] private TextMeshProUGUI _blackPieceCountText;
 		[FormerlySerializedAs("whitePieceCountText")] [SerializeField] private TextMeshProUGUI _whitePieceCountText;

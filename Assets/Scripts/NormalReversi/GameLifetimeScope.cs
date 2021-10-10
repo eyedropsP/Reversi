@@ -17,8 +17,8 @@ namespace NormalReversi
             builder.Register<IGameStateManager, GameStateManager>(Lifetime.Singleton);
             builder.RegisterComponent(_gridManager)
                 .AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<ReversiView>();
-            builder.RegisterComponentInHierarchy<ReversiGUI>();
+            builder.RegisterComponentInHierarchy<ReversiObjectView>();
+            builder.RegisterComponentInHierarchy<ReversiGUIView>();
         }
     }
 }
